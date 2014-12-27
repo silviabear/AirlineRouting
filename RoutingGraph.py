@@ -1,8 +1,8 @@
 import json
+from _mysql import NULL
 class RoutingGraph:
     def __init__(self):
         self.metros = {}
-        self.routes = []
     def load(self):
         json_data = open('map_data.json')
         data = json.load(json_data)
@@ -15,7 +15,7 @@ class RoutingGraph:
                          coordinates = city["coordinates"],
                          population = city["population"],
                          region = city["region"],
-                         adj = []
+                         adj = {}
                          )        
             self.addCity(city["code"], metro)
         for route in data["routes"]:
@@ -24,14 +24,13 @@ class RoutingGraph:
     def addCity(self, code, city):
         self.metros[code] = city
     def addRoute(self, ports, distance):
-        route = Route(ports = ports, distance = distance)
-        self.routes.append(route)
-        self.metros[ports[0]]._dict_["adj"].append(ports[1])
+        self.metros[ports[0]]._dict_["adj"][ports[1]] = distance
     def getCities(self):
         return self.metros
+    def getCityInfo(self, code):
+        if(self.metros.has_key(code) == False):
+            return NULL
+        return self.metros[code]
 class City:
-        def __init__(self, **arg):
-            self._dict_ = dict(arg)
-class Route:
         def __init__(self, **arg):
             self._dict_ = dict(arg)
