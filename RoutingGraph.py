@@ -1,8 +1,11 @@
 import json
+import sys
 from _mysql import NULL
+from pygments.lexers.agile import MiniDLexer
 class RoutingGraph:
     def __init__(self):
         self.metros = {}
+        self.routes = {}
     def load(self):
         json_data = open('map_data.json')
         data = json.load(json_data)
@@ -24,6 +27,8 @@ class RoutingGraph:
     def addCity(self, code, city):
         self.metros[code] = city
     def addRoute(self, ports, distance):
+        port = Port(ports[0], ports[1])
+        self.routes[port] = distance
         self.metros[ports[0]]._dict_["adj"][ports[1]] = distance
     def getCities(self):
         return self.metros
@@ -31,6 +36,62 @@ class RoutingGraph:
         if(self.metros.has_key(code) == False):
             return NULL
         return self.metros[code]
+    def getFlightStatistic(self):
+        mini= sys.maxint
+        maxi = 0
+        minPort = Port("0", "0")
+        maxPort  = Port("0", "0")
+        totaldistance = 0  
+        for ports, distance in self.routes.items():
+            totaldistance+=distance
+            if(distance < mini):
+                mini = distance
+                minPort = ports
+            if(distance > maxi):
+                maxi = distance
+                maxPort = ports
+        returnlist = []
+        returnlist.append({minPort: maxi})
+        returnlist.append({maxPort: mini})
+        returnlist.append(totaldistance/len(self.routes))
+        return returnlist
+    def getCityStatistic(self):
+        mini = sys.maxint
+        maxi = 0
+        minCity = City()
+        maxCity = City()
+        maxConnect = 0
+        maxConnectCity = []
+        totalSize = 0
+        for code, city in self.metros.items():
+            connection = len(city._dict_["adj"])
+            if(connection > maxConnect):
+                maxConnectCity = []
+                maxConnectCity.append(city)
+            elif(connection == maxConnect):
+                maxConnectCity.append(city)
+            size = city._dict_["population"]
+            totalSize += size
+            if(size < mini):
+                mini = size
+                minCity = city
+            if(size > maxi):
+                maxi = size
+                maxCity = city
+        returnlist = []
+        returnlist.append(maxCity)
+        returnlist.append(minCity)
+        returnlist.append(totalSize/len(self.metros))
+        returnlist.append(maxConnectCity)
+        return returnlist
+    def getCitiesInContinents(self):
+        pass
+    def getHubCities(self):
+        pass
 class City:
-        def __init__(self, **arg):
-            self._dict_ = dict(arg)
+    def __init__(self, **arg):
+        self._dict_ = dict(arg)
+class Port:
+    def __init__(self, dep, des):
+        self.dep = dep
+        self.des = des

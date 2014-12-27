@@ -1,7 +1,6 @@
-#! /usr/bin/python
+#!/usr/bin/python
 from RoutingGraph import *
 import sys
-import pprint
 
 routing = RoutingGraph()
 def start():
@@ -53,6 +52,30 @@ def Query():
         for dest, distance in city._dict_["adj"].items():
             print "City: {0:1} Distance: {1:1d}".format(dest, distance)
 def Statistic():
-    pass
+    flight = routing.getFlightStatistic()
+    city = routing.getCityStatistic()
+    print "The longest single flight:"
+    for ports, distance in flight[0].items():
+        print "{0:1}-{1:1}".format(ports.dep, ports.des)
+        print "distance: %d"%distance
+    print "The shortest single flight:"
+    for ports, distance in flight[1].items():
+        print "{0:1}-{1:1}".format(ports.dep, ports.des)
+        print "distance: %d"%distance
+    print "Average distance of flights:"
+    print flight[2]
+    print "The biggest city we serve:"
+    print "Name: %s"%city[0]._dict_["name"]
+    print "Population: %d"%city[0]._dict_["population"]
+    print "The smallest city we serve:"
+    print "Name: %s"%city[1]._dict_["name"]
+    print "Population: %d"%city[1]._dict_["population"]
+    print "The average size of cities we serve:"
+    print city[2]
+    print "The cities we serve in continents:"
+    print routing.getCitiesInContinents()
+    print "Our hub cities:"
+    for i in range(len(city[3])):
+        print city[3][i]._dict_["name"]
 if __name__ == '__main__':
     start()
