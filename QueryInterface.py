@@ -1,7 +1,7 @@
-#!/usr/bin/python
 from RoutingGraph import *
 import sys
 import webbrowser
+from boto.roboto.awsqueryrequest import Line
 
 routing = RoutingGraph()
 def start():
@@ -12,7 +12,8 @@ def start():
         print("2.Query of  airlines to/from one city")
         print("3. Statistic of our network")
         print("4. Visualize all our routes")
-        print("5. Exit")
+        print("5. Query route detail")
+        print("6. Exit")
         print("Please enter the number of items.")
         line = sys.stdin.readline()
         if(line == "1\n"):
@@ -24,18 +25,55 @@ def start():
         elif(line == "4\n"):
             Visualize()
         elif(line == "5\n"):
+            QueryRoute()
+        elif(line == "6\n"):
             exit()
         else:
             print("Please enter valid number")
+def QueryRoute():
+    while(True):
+        print "Please enter the sequence of codes of cities in the route, end with 'END'"
+        print "For back to main menu enter b"
+        list = []
+        current = readFromStdin()
+        if(current == "b"):
+            return
+        if(routing.metros.has_key(current) == False):
+            print "Code does not exist!"
+            continue
+        list.append(current)
+        line = readFromStdin()
+        while(line != "END"):
+            if(current == "b"):
+                return
+            list.append(line)
+            line = readFromStdin()
+        if(len(list) == 1):
+            print "Not enough cities to form a route! Please enter again."
+            continue
+        data = routing.getRouteData(list)
+        if(len(data) == 0):
+            continue
+        print "Total distance:"
+        print data[0]
+        print "Total cost:"
+        print data[1]
+        print "Total time:"
+        print data[2]
 def ListAllCities():
     for city in routing.getCities():
         print routing.getCities()[city]._dict_["name"]
+
+def readFromStdin():
+    line = sys.stdin.readline()
+    line = line[:-1]
+    return line
+
 def Query():
     while(True):
         print("Enter the code of city you would like to query:")
         print("Back to main menu, enter b")
-        line = sys.stdin.readline()
-        line = line[:-1]
+        line = readFromStdin()
         if(line == "b"):
             return;
         city = routing.getCityInfo(line)
