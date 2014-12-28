@@ -89,6 +89,12 @@ class RoutingGraph:
         returnlist.append(maxConnectCity)
         returnlist.append(continents)
         return returnlist
+    def removeRoute(self, dep, des):
+        for ports, distance in self.routes.items():
+            if(ports.dep == dep and ports.des == des):
+                self.routes.pop(ports)
+                return True
+        return False
 class City:
     def __init__(self, **arg):
         self._dict_ = dict(arg)
