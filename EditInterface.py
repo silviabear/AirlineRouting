@@ -1,4 +1,5 @@
 from RoutingGraph import *
+import io
 routing = RoutingGraph()
 def start():
     routing.load()
@@ -23,10 +24,34 @@ def start():
         elif(line == "5"):
             EditCity()
         elif(line == "6"):
-            exit()
+            save()
         else:
             print "Please enter valid option."
-
+def save():
+    cities = []
+    for code, city in routing.metros.items():
+        city._dict_["code"] = code
+        city._dict_.pop("adj")
+        cities.append(city._dict_)
+    ben = []
+    for ports, distance in routing.routes.items():
+        r = {"ports": [ports.dep, ports.des], "distance": distance}
+        ben.append(r)
+    with io.open('map_data.json', 'w') as outfile:
+        outfile.write(unicode(json.dumps({
+                      "data sources" : [
+                "http://www.gcmap.com/" ,
+                "http://www.theodora.com/country_digraphs.html" ,
+                "http://www.citypopulation.de/world/Agglomerations.html" ,
+                "http://www.mongabay.com/cities_urban_01.htm" ,
+                "http://en.wikipedia.org/wiki/Urban_agglomeration" ,
+                "http://www.worldtimezone.com/standard.html"
+            ],
+                       "metros" :cities,
+                       "routes" :ben
+                       }, outfile
+                    )))
+    exit()
 def removeCity():
     while(True):
         print "Please enter the code of city you would like to delete:"
