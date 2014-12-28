@@ -73,7 +73,11 @@ def Statistic():
     print "The average size of cities we serve:"
     print city[2]
     print "The cities we serve in continents:"
-    print routing.getCitiesInContinents()
+    for continent, continentCity in city[4].items():
+        print "Continent: %s"%continent
+        print "Cities: "
+        for i in range(len(continentCity.cities)):
+            print continentCity.cities[i]._dict_["name"]
     print "Our hub cities:"
     for i in range(len(city[3])):
         print city[3][i]._dict_["name"]

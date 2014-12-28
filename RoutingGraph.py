@@ -63,7 +63,11 @@ class RoutingGraph:
         maxConnect = 0
         maxConnectCity = []
         totalSize = 0
+        continents = {}
         for code, city in self.metros.items():
+            if(continents.has_key(city._dict_["continent"]) == False):
+                continents[city._dict_["continent"]] = Continent()
+            continents[city._dict_["continent"]].cities.append(city)
             connection = len(city._dict_["adj"])
             if(connection > maxConnect):
                 maxConnectCity = []
@@ -83,11 +87,8 @@ class RoutingGraph:
         returnlist.append(minCity)
         returnlist.append(totalSize/len(self.metros))
         returnlist.append(maxConnectCity)
+        returnlist.append(continents)
         return returnlist
-    def getCitiesInContinents(self):
-        pass
-    def getHubCities(self):
-        pass
 class City:
     def __init__(self, **arg):
         self._dict_ = dict(arg)
@@ -95,3 +96,6 @@ class Port:
     def __init__(self, dep, des):
         self.dep = dep
         self.des = des
+class Continent:
+    def __init__(self):
+        self.cities = []
