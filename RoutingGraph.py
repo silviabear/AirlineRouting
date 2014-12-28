@@ -1,7 +1,7 @@
 import json
 import sys
 from _mysql import NULL
-from pygments.lexers.agile import MiniDLexer
+
 class RoutingGraph:
     def __init__(self):
         self.metros = {}

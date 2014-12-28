@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from RoutingGraph import *
 import sys
+import webbrowser
 
 routing = RoutingGraph()
 def start():
@@ -10,7 +11,8 @@ def start():
         print("1. List all cities in the routes")
         print("2.Query of  airlines to/from one city")
         print("3. Statistic of our network")
-        print("4. Exit")
+        print("4. Visualize all our routes")
+        print("5. Exit")
         print("Please enter the number of items.")
         line = sys.stdin.readline()
         if(line == "1\n"):
@@ -20,6 +22,8 @@ def start():
         elif(line == "3\n"):
             Statistic()
         elif(line == "4\n"):
+            Visualize()
+        elif(line == "5\n"):
             exit()
         else:
             print("Please enter valid number")
@@ -81,5 +85,15 @@ def Statistic():
     print "Our hub cities:"
     for i in range(len(city[3])):
         print city[3][i]._dict_["name"]
+def Visualize():
+    url = "http://www.gcmap.com/mapui?P="
+    for ports, distance in routing.routes.items():
+        url += ports.dep
+        url += "-"
+        url += ports.des
+        url += ","
+    url = url[:-1]
+    print url
+    webbrowser.open(url)
 if __name__ == '__main__':
     start()
