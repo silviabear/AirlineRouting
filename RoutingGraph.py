@@ -1,6 +1,7 @@
 import json
 import sys
 from _mysql import NULL
+from _heapq import heappush
 
 class RoutingGraph:
     def __init__(self):
@@ -30,12 +31,46 @@ class RoutingGraph:
         port = Port(ports[0], ports[1])
         self.routes[port] = distance
         self.metros[ports[0]]._dict_["adj"][ports[1]] = distance
+        self.metros[ports[1]]._dict_["adj"][ports[0]] = distance
     def getCities(self):
         return self.metros
     def getCityInfo(self, code):
         if(self.metros.has_key(code) == False):
             return NULL
         return self.metros[code]
+    def findPath(self, dep, des):
+        dist = {}
+        previous = {}
+        visited = []
+        find = False
+        dist[dep] = 0
+        for code, city  in self.metros.items():
+            if(code != dep):
+                dist[code] = sys.maxint - 1
+            visited.append(code)
+        dist[des] = sys.maxint
+        while(len(visited) != 0):
+            minkey = min(visited, key = lambda(item) : dist[item])
+            print minkey
+            print dist[minkey]
+            if(minkey == des):
+                find = True
+                break
+            visited.remove(minkey)
+            for city, distance in self.metros[minkey]._dict_["adj"].items():
+                alt = dist[minkey] + distance
+                if(alt < dist[city]):
+                    dist[city] = alt
+                    previous[city] = minkey
+        if(find == False):
+            return 0
+        total = 0
+        current = des
+        while(previous.has_key(current)):
+            distance = self.metros[previous[current]]._dict_["adj"][current]
+            total +=distance
+            current = previous[current]
+        return total
     def getFlightStatistic(self):
         mini= sys.maxint
         maxi = 0
@@ -94,6 +129,8 @@ class RoutingGraph:
             if(ports.dep == dep and ports.des == des):
                 self.routes.pop(ports)
                 return True
+        self.metros[dep]._dict_["adj"].pop(des)
+        self.metros[des]._dict_["adj"].pop(dep)
         return False
     def getRouteData(self, list):
         distanceList = []

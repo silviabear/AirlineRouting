@@ -13,7 +13,8 @@ def start():
         print("3. Statistic of our network")
         print("4. Visualize all our routes")
         print("5. Query route detail")
-        print("6. Exit")
+        print("6. Find shortest routes")
+        print("7. Exit")
         print("Please enter the number of items.")
         line = sys.stdin.readline()
         if(line == "1\n"):
@@ -27,9 +28,33 @@ def start():
         elif(line == "5\n"):
             QueryRoute()
         elif(line == "6\n"):
+            findPath()
+        elif(line == "7\n"):
             exit()
         else:
             print("Please enter valid number")
+def findPath():
+    while(True):
+        print "Please enter the code of the departing city:"
+        print "For back to main menu enter b"
+        line = readFromStdin()
+        if(line == "b"):
+            return 
+        if(routing.metros.has_key(line) == False):
+            print "Code does not exist!"
+            continue
+        dep = line
+        print "Please enter the code of arriving city:"
+        line = readFromStdin()
+        if(routing.metros.has_key(line) == False):
+            print "Code does not exist!"
+            continue
+        des = line
+        distance = routing.findPath(dep, des)
+        if(distance == 0):
+            print "Route does not exist!"
+        else:
+            print "Distance: %d"%distance
 def QueryRoute():
     while(True):
         print "Please enter the sequence of codes of cities in the route, end with 'END'"
